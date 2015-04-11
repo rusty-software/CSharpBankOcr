@@ -3,12 +3,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using System.IO;
 
 namespace BankOcrTests
 {
     [TestClass]
     public class UserStory1Tests
     {
+        #region ToArabic tests
         [TestMethod]
         public void ToArabic_Zero_Returns0()
         {
@@ -97,6 +99,47 @@ namespace BankOcrTests
                       + "|_|"
                       + " _|";
             Assert.AreEqual(9, DigitConverter.ToArabic(digit));
+        }
+
+        #endregion
+
+        [TestMethod]
+        public void GetDigitizedAccountNumbers_GoodFile_ReturnsDigitizedAccountNumbers()
+        {
+            var parser = new Parser();
+            var file = "Resources\\UserStory1.txt";
+            
+            var digitizedAccountNumbers = parser.GetDigitizedAccountNumbers(file);
+
+            Assert.AreEqual(11, digitizedAccountNumbers.Count);
+        }
+    }
+
+    public class DigitizedAccountNumber
+    {
+        public DigitizedAccountNumber(string[] lines)
+        {
+
+        }
+    }
+
+    public class Parser
+    {
+        public List<DigitizedAccountNumber> GetDigitizedAccountNumbers(string file)
+        {
+            var dans = new List<DigitizedAccountNumber>();
+            string[] allLines = System.IO.File.ReadAllLines(file);
+            for (var i = 0; i < allLines.Length; i += 4)
+            {
+                string[] lines = new string[4];
+                lines[0] = allLines[i];
+                lines[1] = allLines[i + 1];
+                lines[2] = allLines[i + 2];
+                lines[3] = allLines[i + 3];
+
+                dans.Add(new DigitizedAccountNumber(lines));
+            }
+            return dans;
         }
     }
 
