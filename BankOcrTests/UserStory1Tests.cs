@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
 using System.IO;
+using System.Text;
 
 namespace BankOcrTests
 {
@@ -113,13 +114,42 @@ namespace BankOcrTests
 
             Assert.AreEqual(11, digitizedAccountNumbers.Count);
         }
+
+        [TestMethod]
+        public void Digits_GoodLines_ReturnsNineDigits()
+        {
+            var lines = new string[4];
+            lines[0] = "    _  _     _  _  _  _  _ ";
+            lines[1] = "  | _| _||_||_ |_   ||_||_|";
+            lines[2] = "  ||_  _|  | _||_|  ||_| _|";
+            lines[3] = "                           ";
+
+            var dan = new DigitizedAccountNumber(lines);
+
+            Assert.AreEqual(9, dan.Digits.Count);
+            var one = "   "
+                    + "  |"
+                    + "  |";
+            Assert.AreEqual(one, dan.Digits.First());
+            var nine = " _ "
+                     + "|_|"
+                     + " _|";
+            Assert.AreEqual(nine, dan.Digits.Last());
+        }
     }
 
     public class DigitizedAccountNumber
     {
+        public List<string> Digits { get; private set; }
         public DigitizedAccountNumber(string[] lines)
         {
-
+            Digits = new List<string>();
+            for (var i = 0; i < 27; i += 3)
+            {
+                var sb = new StringBuilder();
+                sb.Append(lines[0].Substring(i, 3)).Append(lines[1].Substring(i, 3)).Append(lines[2].Substring(i, 3));
+                Digits.Add(sb.ToString());
+            }
         }
     }
 
