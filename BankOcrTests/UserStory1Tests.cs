@@ -136,6 +136,20 @@ namespace BankOcrTests
                      + " _|";
             Assert.AreEqual(nine, dan.Digits.Last());
         }
+
+        [TestMethod]
+        public void ToArabicAccountNumber_GoodLines_ReturnsArabic()
+        {
+            var lines = new string[4];
+            lines[0] = "    _  _     _  _  _  _  _ ";
+            lines[1] = "  | _| _||_||_ |_   ||_||_|";
+            lines[2] = "  ||_  _|  | _||_|  ||_| _|";
+            lines[3] = "                           ";
+
+            var dan = new DigitizedAccountNumber(lines);
+
+            Assert.AreEqual("123456789", dan.ToArabicAccountNumber());
+        }
     }
 
     public class DigitizedAccountNumber
@@ -150,6 +164,13 @@ namespace BankOcrTests
                 sb.Append(lines[0].Substring(i, 3)).Append(lines[1].Substring(i, 3)).Append(lines[2].Substring(i, 3));
                 Digits.Add(sb.ToString());
             }
+        }
+
+        public string ToArabicAccountNumber()
+        {
+            var sb = new StringBuilder();
+            Digits.ForEach(digit => sb.Append(DigitConverter.ToArabic(digit)));
+            return sb.ToString();
         }
     }
 
