@@ -52,6 +52,9 @@
   <ItemGroup>
     <Compile Include="UserStory1Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserStory2Tests.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\UserStory1.txt">
