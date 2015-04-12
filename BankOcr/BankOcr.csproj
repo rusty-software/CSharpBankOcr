@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountNumberValidator.cs" />
     <Compile Include="DigitConverter.cs" />
     <Compile Include="DigitizedAccountNumber.cs" />
     <Compile Include="Parser.cs" />
