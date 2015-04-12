@@ -7,7 +7,8 @@ namespace BankOcrTests
     [TestClass]
     public class UserStory3Tests
     {
-        [TestMethod]
+        [TestMethod, Ignore]
+        // NOTE: ignoring because User Story 4 eliminated ERR
         public void Validator_BadCheckSum_ReturnsERR()
         {
             var lines = new string[4];

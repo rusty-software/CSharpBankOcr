@@ -41,7 +41,7 @@ namespace BankOcrTests
 
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void ERR_OneOff_ReturnsAlteredCorrectNumber()
         {
             var lines = new string[4];

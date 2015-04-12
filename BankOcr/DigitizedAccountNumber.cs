@@ -42,7 +42,7 @@ namespace BankOcr
             return accountNums;
         }
 
-        public List<string> OtherAccountNumbersFor(string accountNumber, string illegibleDigit)
+        public List<string> OtherAccountNumbersFor(string accountNumber, int digitIndex)
         {
             var charsToSwap = new Dictionary<string, List<char>>
                 {
@@ -51,13 +51,27 @@ namespace BankOcr
                     {"|", new List<char> {'_'}}
                 };
 
-            var accountNumParts = accountNumber.Split('?');
-            var otherAccountNumbers = new List<string>();
-            for (var i = 0; i < illegibleDigit.Length; i++)
+            var digit = Digits[digitIndex];
+            var preDigit = "";
+            var postDigit = "";
+            if (digitIndex == 0)
             {
-                var sb = new StringBuilder(illegibleDigit);
-                var s = illegibleDigit.Substring(i, 1);
-                otherAccountNumbers.AddRange(SwapAndConvert(accountNumParts[0], accountNumParts[1], sb, i, charsToSwap[s]));
+                postDigit = accountNumber.Substring(1);
+            } else if (digitIndex == accountNumber.Length)
+            {
+                preDigit = accountNumber.Substring(0, digitIndex - 1);
+            }
+            else
+            {
+                preDigit = accountNumber.Substring(0, digitIndex);
+                postDigit = accountNumber.Substring(digitIndex + 1);
+            }
+            var otherAccountNumbers = new List<string>();
+            for (var i = 0; i < digit.Length; i++)
+            {
+                var sb = new StringBuilder(digit);
+                var s = digit.Substring(i, 1);
+                otherAccountNumbers.AddRange(SwapAndConvert(preDigit, postDigit, sb, i, charsToSwap[s]));
             }
             return otherAccountNumbers;
         }
@@ -71,10 +85,10 @@ namespace BankOcr
         {
             var translated = ToArabicAccountNumber();
             var validator = new AccountNumberValidator();
+            var result = new TranslationResult { AccountNumber = translated };
             if (translated.Contains("?"))
             {
-                var illegibleDigit = Digits[translated.IndexOf('?')];
-                var others = OtherAccountNumbersFor(translated, illegibleDigit);
+                var others = OtherAccountNumbersFor(translated, translated.IndexOf('?'));
                 var numsWithValidChecksums = new List<string>();
                 foreach(var accountNum in others)
                 {
@@ -85,22 +99,49 @@ namespace BankOcr
                 }
                 if (numsWithValidChecksums.Count == 1)
                 {
-                    return new TranslationResult { AccountNumber = numsWithValidChecksums.First() };
+                    result.AccountNumber = numsWithValidChecksums.First();
                 } 
                 else if (numsWithValidChecksums.Count > 1)
                 {
-                    return new TranslationResult { AccountNumber = translated, ErrCode = AmbiguousDescriptionFor(numsWithValidChecksums) };
+                    result.ErrCode = AmbiguousDescriptionFor(numsWithValidChecksums);
                 }
-                return new TranslationResult { AccountNumber = translated, ErrCode = "ILL" };
+                else 
+                {
+                    result.ErrCode = "ILL";
+                }
             }
             else 
             {
-                if (validator.IsValid(translated))
+                if (!validator.IsValid(translated))
                 {
-                    return new TranslationResult { AccountNumber = translated };
+                    var numsWithValidChecksums = new List<string>();
+                    for (var i = 0; i < Digits.Count; i++)
+                    {
+                        var others = OtherAccountNumbersFor(translated, i);
+                        foreach (var accountNum in others)
+                        {
+                            if (validator.IsValid(accountNum))
+                            {
+                                numsWithValidChecksums.Add(accountNum);
+                            }
+                        }
+                    }
+                    if (numsWithValidChecksums.Count == 1)
+                    {
+                        result.AccountNumber = numsWithValidChecksums.First();
+                    }
+                    else if (numsWithValidChecksums.Count > 1)
+                    {
+                        result.ErrCode = AmbiguousDescriptionFor(numsWithValidChecksums);
+                    }
+                    else
+                    {
+                        result.ErrCode = "ILL";
+                    }
                 }
-            return new TranslationResult { AccountNumber = translated, ErrCode = "ERR" };
             }
+
+            return result;
         }
     }
 }
