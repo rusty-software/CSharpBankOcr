@@ -42,7 +42,7 @@ namespace BankOcr
             return accountNums;
         }
 
-        public List<string> OtherAccountNumbersFor(string accountNumber, int digitIndex)
+        public List<string> OtherAccountNumbersFor(string accountNumber, string digit, int digitIndex)
         {
             var charsToSwap = new Dictionary<string, List<char>>
                 {
@@ -51,7 +51,6 @@ namespace BankOcr
                     {"|", new List<char> {'_'}}
                 };
 
-            var digit = Digits[digitIndex];
             var preDigit = "";
             var postDigit = "";
             if (digitIndex == 0)
@@ -81,63 +80,64 @@ namespace BankOcr
             return "";
         }
 
-        public TranslationResult Translate()
+        // HACK: the nullable int is terrible.  I'm ashamed.
+        private TranslationResult FiddleWithDigits(string sourceAccountNum, List<string> digitsToTry, int? digitIndexInSourceAccountNum)
         {
-            var translated = ToArabicAccountNumber();
+            var result = new TranslationResult();
             var validator = new AccountNumberValidator();
-            var result = new TranslationResult { AccountNumber = translated };
-            if (translated.Contains("?"))
+
+            var numsWithValidChecksums = new List<string>();
+            for (var i = 0; i < digitsToTry.Count; i++)
             {
-                var others = OtherAccountNumbersFor(translated, translated.IndexOf('?'));
-                var numsWithValidChecksums = new List<string>();
-                foreach(var accountNum in others)
+                var others = OtherAccountNumbersFor(sourceAccountNum, digitsToTry[i], digitIndexInSourceAccountNum ?? i);
+                foreach (var accountNum in others)
                 {
                     if (validator.IsValid(accountNum))
                     {
                         numsWithValidChecksums.Add(accountNum);
                     }
                 }
-                if (numsWithValidChecksums.Count == 1)
-                {
-                    result.AccountNumber = numsWithValidChecksums.First();
-                } 
-                else if (numsWithValidChecksums.Count > 1)
-                {
-                    result.ErrCode = AmbiguousDescriptionFor(numsWithValidChecksums);
-                }
-                else 
-                {
-                    result.ErrCode = "ILL";
-                }
+            }
+            if (numsWithValidChecksums.Count == 1)
+            {
+                result.AccountNumber = numsWithValidChecksums.First();
+            }
+            else if (numsWithValidChecksums.Count > 1)
+            {
+                result.ErrCode = AmbiguousDescriptionFor(numsWithValidChecksums);
+            }
+            else
+            {
+                result.ErrCode = "ILL";
+            }
+            return result;
+        }
+
+        private TranslationResult FiddleWithDigits(string sourceAccountNum, List<string> digitsToTry)
+        {
+            return FiddleWithDigits(sourceAccountNum, digitsToTry, null);
+        }
+
+        public TranslationResult Translate()
+        {
+            var translated = ToArabicAccountNumber();
+            var validator = new AccountNumberValidator();
+            var result = new TranslationResult { AccountNumber = translated };
+            var illCount = translated.Count(c => c == '?');
+            if (illCount > 1)
+            {
+                result.ErrCode = "ILL";
+            }
+            else if (illCount == 1)
+            {
+                var digitIndex = translated.IndexOf('?');
+                result = FiddleWithDigits(translated, new List<string> { Digits[digitIndex] }, digitIndex);
             }
             else 
             {
                 if (!validator.IsValid(translated))
                 {
-                    var numsWithValidChecksums = new List<string>();
-                    for (var i = 0; i < Digits.Count; i++)
-                    {
-                        var others = OtherAccountNumbersFor(translated, i);
-                        foreach (var accountNum in others)
-                        {
-                            if (validator.IsValid(accountNum))
-                            {
-                                numsWithValidChecksums.Add(accountNum);
-                            }
-                        }
-                    }
-                    if (numsWithValidChecksums.Count == 1)
-                    {
-                        result.AccountNumber = numsWithValidChecksums.First();
-                    }
-                    else if (numsWithValidChecksums.Count > 1)
-                    {
-                        result.ErrCode = AmbiguousDescriptionFor(numsWithValidChecksums);
-                    }
-                    else
-                    {
-                        result.ErrCode = "ILL";
-                    }
+                    result = FiddleWithDigits(translated, Digits);
                 }
             }
 
