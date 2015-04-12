@@ -27,45 +27,37 @@ namespace BankOcr
             return sb.ToString();
         }
 
+        private List<string> SwapAndConvert(string preIll, string postIll, StringBuilder digit, int indexToSwapAt, List<char> charsToSwap)
+        {
+            var accountNums = new List<string>();
+            foreach(var otherChar in charsToSwap)
+            {
+                digit[indexToSwapAt] = otherChar;
+                var arabic = DigitConverter.ToArabic(digit.ToString());
+                if (arabic != "?")
+                {
+                    accountNums.Add(preIll + arabic + postIll);
+                }
+            }
+            return accountNums;
+        }
+
         public List<string> OtherAccountNumbersFor(string accountNumber, string illegibleDigit)
         {
+            var charsToSwap = new Dictionary<string, List<char>>
+                {
+                    {" ", new List<char> {'|', '_'}},
+                    {"_", new List<char> {'|'}},
+                    {"|", new List<char> {'_'}}
+                };
+
             var accountNumParts = accountNumber.Split('?');
             var otherAccountNumbers = new List<string>();
             for (var i = 0; i < illegibleDigit.Length; i++)
             {
                 var sb = new StringBuilder(illegibleDigit);
                 var s = illegibleDigit.Substring(i, 1);
-                if (s == " ")
-                {
-                    sb[i] = '|';
-                    var arabic = DigitConverter.ToArabic(sb.ToString());
-                    if (arabic != "?")
-                    {
-                        otherAccountNumbers.Add(accountNumParts[0] + arabic + accountNumParts[1]);
-                    }
-                    sb[i] = '_';
-                    arabic = DigitConverter.ToArabic(sb.ToString());
-                    if (arabic != "?")
-                    {
-                        otherAccountNumbers.Add(accountNumParts[0] + arabic + accountNumParts[1]);
-                    }
-                }
-                else
-                {
-                    if (s == "|")
-                    {
-                        sb[i] = '_';
-                    }
-                    else if (s == "_")
-                    {
-                        sb[i] = '|';
-                    }
-                    var arabic = DigitConverter.ToArabic(sb.ToString());
-                    if (arabic != "?")
-                    {
-                        otherAccountNumbers.Add(accountNumParts[0] + arabic + accountNumParts[1]);
-                    }
-                }
+                otherAccountNumbers.AddRange(SwapAndConvert(accountNumParts[0], accountNumParts[1], sb, i, charsToSwap[s]));
             }
             return otherAccountNumbers;
         }
