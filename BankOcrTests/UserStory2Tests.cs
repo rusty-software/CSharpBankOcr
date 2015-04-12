@@ -19,7 +19,7 @@ namespace BankOcrTests
         [TestMethod]
         public void IsValid_BadAccountNumber_ReturnsFalse()
         {
-            Assert.IsTrue(validator.IsValid("123456789"));
+            Assert.IsFalse(validator.IsValid("222222222"));
         }
     }
 }
