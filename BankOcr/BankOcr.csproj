@@ -41,12 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountNumberTranslator.cs" />
     <Compile Include="AccountNumberValidator.cs" />
     <Compile Include="DigitConverter.cs" />
     <Compile Include="DigitizedAccountNumber.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TranslationResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
