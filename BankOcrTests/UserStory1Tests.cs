@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections;
 using System.IO;
 using System.Text;
+using BankOcr;
 
 namespace BankOcrTests
 {
@@ -149,90 +150,6 @@ namespace BankOcrTests
             var dan = new DigitizedAccountNumber(lines);
 
             Assert.AreEqual("123456789", dan.ToArabicAccountNumber());
-        }
-    }
-
-    public class DigitizedAccountNumber
-    {
-        public List<string> Digits { get; private set; }
-        public DigitizedAccountNumber(string[] lines)
-        {
-            Digits = new List<string>();
-            for (var i = 0; i < 27; i += 3)
-            {
-                var sb = new StringBuilder();
-                sb.Append(lines[0].Substring(i, 3)).Append(lines[1].Substring(i, 3)).Append(lines[2].Substring(i, 3));
-                Digits.Add(sb.ToString());
-            }
-        }
-
-        public string ToArabicAccountNumber()
-        {
-            var sb = new StringBuilder();
-            Digits.ForEach(digit => sb.Append(DigitConverter.ToArabic(digit)));
-            return sb.ToString();
-        }
-    }
-
-    public class Parser
-    {
-        public List<DigitizedAccountNumber> GetDigitizedAccountNumbers(string file)
-        {
-            var dans = new List<DigitizedAccountNumber>();
-            string[] allLines = System.IO.File.ReadAllLines(file);
-            for (var i = 0; i < allLines.Length; i += 4)
-            {
-                string[] lines = new string[4];
-                lines[0] = allLines[i];
-                lines[1] = allLines[i + 1];
-                lines[2] = allLines[i + 2];
-                lines[3] = allLines[i + 3];
-
-                dans.Add(new DigitizedAccountNumber(lines));
-            }
-            return dans;
-        }
-    }
-
-    public static class DigitConverter
-    {
-        private static Dictionary<string, int> digitArabicMap = new Dictionary<string, int>
-        {
-            {  " _ "
-             + "| |"
-             + "|_|", 0},
-            {  "   "
-             + "  |"
-             + "  |", 1},
-            {  " _ "
-             + " _|"
-             + "|_ ", 2},
-            {  " _ "
-             + " _|"
-             + " _|", 3},
-            {  "   "
-             + "|_|"
-             + "  |", 4},
-            {  " _ "
-             + "|_ "
-             + " _|", 5},
-            {  " _ "
-             + "|_ "
-             + "|_|", 6},
-            {  " _ "
-             + "  |"
-             + "  |", 7},
-            {  " _ "
-             + "|_|"
-             + "|_|", 8},
-            {  " _ "
-             + "|_|"
-             + " _|", 9},
-        };
-
-        public static int ToArabic(string digit)
-        {
-            return digitArabicMap[digit];
         }
     }
 }

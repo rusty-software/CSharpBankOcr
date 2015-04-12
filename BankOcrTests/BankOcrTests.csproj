@@ -58,6 +58,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BankOcr\BankOcr.csproj">
+      <Project>{0204de04-cde1-42ea-9c47-f09b38586211}</Project>
+      <Name>BankOcr</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
