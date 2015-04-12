@@ -8,7 +8,41 @@ namespace BankOcrTests
     public class UserStory4Tests
     {
         [TestMethod]
-        public void OneOff_ReturnsAlteredCorrectNumber()
+        public void ILL_OneOff_ReturnsAlteredCorrectNumber()
+        {
+            var lines = new string[4];
+            lines[0] = " _     _  _  _  _  _  _    ";
+            lines[1] = "| || || || || || || ||_   |";
+            lines[2] = "|_||_||_||_||_||_||_| _|  |";
+            lines[3] = "                           ";
+            var translator = new AccountNumberTranslator();
+            var expected = new TranslationResult { AccountNumber = "000000051" };
+
+            var actual = translator.Translate(lines);
+
+            Assert.AreEqual(expected, actual);
+
+        }
+
+        [TestMethod]
+        public void ILL_OneOff_ReturnsAlteredCorrectNumber_2()
+        {
+            var lines = new string[4];
+            lines[0] = "    _  _  _  _  _  _     _ ";
+            lines[1] = "|_||_|| ||_||_   |  |  | _ ";
+            lines[2] = "  | _||_||_||_|  |  |  | _|";
+            lines[3] = "                           ";
+            var translator = new AccountNumberTranslator();
+            var expected = new TranslationResult { AccountNumber = "490867715" };
+
+            var actual = translator.Translate(lines);
+
+            Assert.AreEqual(expected, actual);
+
+        }
+
+        [TestMethod, Ignore]
+        public void ERR_OneOff_ReturnsAlteredCorrectNumber()
         {
             var lines = new string[4];
             lines[0] = "                           ";
@@ -17,12 +51,11 @@ namespace BankOcrTests
             lines[3] = "                           ";
 
             var translator = new AccountNumberTranslator();
-            var expected = new TranslationResult { AccountNumber = "711111111", ErrCode = null };
+            var expected = new TranslationResult { AccountNumber = "711111111" };
 
             var actual = translator.Translate(lines);
 
             Assert.AreEqual(expected, actual);
-
         }
     }
 }
