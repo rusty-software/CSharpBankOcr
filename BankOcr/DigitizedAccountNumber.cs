@@ -26,5 +26,20 @@ namespace BankOcr
             Digits.ForEach(digit => sb.Append(DigitConverter.ToArabic(digit)));
             return sb.ToString();
         }
+
+        public TranslationResult Translate()
+        {
+            var translated = ToArabicAccountNumber();
+            if (translated.Contains("?"))
+            {
+                return new TranslationResult { AccountNumber = translated, ErrCode = "ILL" };
+            }
+            if ((new AccountNumberValidator()).IsValid(translated))
+            {
+                return new TranslationResult { AccountNumber = translated };
+            }
+
+            return new TranslationResult { AccountNumber = translated, ErrCode = "ERR" };
+        }
     }
 }

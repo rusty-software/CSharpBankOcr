@@ -10,17 +10,8 @@ namespace BankOcr
     {
         public TranslationResult Translate(string[] lines)
         {
-            var dan = new DigitizedAccountNumber(lines);
-            var validator = new AccountNumberValidator();
-
-            var accountNumber = dan.ToArabicAccountNumber();
-            if (accountNumber.Contains("?"))
-            {
-                return new TranslationResult { AccountNumber = accountNumber, ErrCode = "ILL" };
-            }
-
-            var isValid = validator.IsValid(accountNumber);
-            return new TranslationResult { AccountNumber = accountNumber, ErrCode = (isValid ? null : "ERR") };
+            var digitizedAccountNumber = new DigitizedAccountNumber(lines);
+            return digitizedAccountNumber.Translate();
         }
     }
 }
