@@ -19,7 +19,7 @@ namespace BankOcrTests
             var digit = " _ "
                       + "| |"
                       + "|_|";
-            Assert.AreEqual(0, DigitConverter.ToArabic(digit));
+            Assert.AreEqual("0", DigitConverter.ToArabic(digit));
         }
 
         [TestMethod]
@@ -28,7 +28,7 @@ namespace BankOcrTests
             var digit = "   "
                       + "  |"
                       + "  |";
-            Assert.AreEqual(1, DigitConverter.ToArabic(digit));
+            Assert.AreEqual("1", DigitConverter.ToArabic(digit));
         }
 
         [TestMethod]
@@ -37,7 +37,7 @@ namespace BankOcrTests
             var digit = " _ "
                       + " _|"
                       + "|_ ";
-            Assert.AreEqual(2, DigitConverter.ToArabic(digit));
+            Assert.AreEqual("2", DigitConverter.ToArabic(digit));
         }
 
         [TestMethod]
@@ -46,7 +46,7 @@ namespace BankOcrTests
             var digit = " _ "
                       + " _|"
                       + " _|";
-            Assert.AreEqual(3, DigitConverter.ToArabic(digit));
+            Assert.AreEqual("3", DigitConverter.ToArabic(digit));
         }
 
         [TestMethod]
@@ -55,7 +55,7 @@ namespace BankOcrTests
             var digit = "   "
                       + "|_|"
                       + "  |";
-            Assert.AreEqual(4, DigitConverter.ToArabic(digit));
+            Assert.AreEqual("4", DigitConverter.ToArabic(digit));
         }
 
         [TestMethod]
@@ -64,7 +64,7 @@ namespace BankOcrTests
             var digit = " _ "
                       + "|_ "
                       + " _|";
-            Assert.AreEqual(5, DigitConverter.ToArabic(digit));
+            Assert.AreEqual("5", DigitConverter.ToArabic(digit));
         }
 
         [TestMethod]
@@ -73,7 +73,7 @@ namespace BankOcrTests
             var digit = " _ "
                       + "|_ "
                       + "|_|";
-            Assert.AreEqual(6, DigitConverter.ToArabic(digit));
+            Assert.AreEqual("6", DigitConverter.ToArabic(digit));
         }
 
         [TestMethod]
@@ -82,7 +82,7 @@ namespace BankOcrTests
             var digit = " _ "
                       + "  |"
                       + "  |";
-            Assert.AreEqual(7, DigitConverter.ToArabic(digit));
+            Assert.AreEqual("7", DigitConverter.ToArabic(digit));
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@ namespace BankOcrTests
             var digit = " _ "
                       + "|_|"
                       + "|_|";
-            Assert.AreEqual(8, DigitConverter.ToArabic(digit));
+            Assert.AreEqual("8", DigitConverter.ToArabic(digit));
         }
 
         [TestMethod]
@@ -100,7 +100,7 @@ namespace BankOcrTests
             var digit = " _ "
                       + "|_|"
                       + " _|";
-            Assert.AreEqual(9, DigitConverter.ToArabic(digit));
+            Assert.AreEqual("9", DigitConverter.ToArabic(digit));
         }
 
         #endregion

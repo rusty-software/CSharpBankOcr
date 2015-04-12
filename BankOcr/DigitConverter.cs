@@ -8,43 +8,43 @@ namespace BankOcr
 {
     public class DigitConverter
     {
-        private static Dictionary<string, int> digitArabicMap = new Dictionary<string, int>
+        private static Dictionary<string, string> digitArabicMap = new Dictionary<string, string>
         {
             {  " _ "
              + "| |"
-             + "|_|", 0},
+             + "|_|", "0"},
             {  "   "
              + "  |"
-             + "  |", 1},
+             + "  |", "1"},
             {  " _ "
              + " _|"
-             + "|_ ", 2},
+             + "|_ ", "2"},
             {  " _ "
              + " _|"
-             + " _|", 3},
+             + " _|", "3"},
             {  "   "
              + "|_|"
-             + "  |", 4},
+             + "  |", "4"},
             {  " _ "
              + "|_ "
-             + " _|", 5},
+             + " _|", "5"},
             {  " _ "
              + "|_ "
-             + "|_|", 6},
+             + "|_|", "6"},
             {  " _ "
              + "  |"
-             + "  |", 7},
+             + "  |", "7"},
             {  " _ "
              + "|_|"
-             + "|_|", 8},
+             + "|_|", "8"},
             {  " _ "
              + "|_|"
-             + " _|", 9},
+             + " _|", "9"},
         };
 
-        public static int ToArabic(string digit)
+        public static string ToArabic(string digit)
         {
-            return digitArabicMap[digit];
+            return (digitArabicMap.ContainsKey(digit) ? digitArabicMap[digit] : "?");
         }
     }
 }
